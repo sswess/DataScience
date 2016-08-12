@@ -1,4 +1,4 @@
-best <- function(state, outcome){
+rankhospital <- function(state, outcome, num = "best"){
   library(dplyr)
   data1 <- read.csv("data/outcome-of-care-measures.csv", colClasses = "character", na.strings="Not Available")
   data <- tbl_df(data1)
@@ -22,16 +22,20 @@ best <- function(state, outcome){
   finalset <- filter(finalset, State == state)
   if(outcome =="heart attack"){
     finalset[,3] <- lapply(finalset[,3], as.numeric)
+    finalset <- finalset[complete.cases(finalset[,3]),]
     finalset <- arrange(finalset,heart.attack,Name)
   }
   if(outcome =="heart failure"){
     finalset[,4] <- lapply(finalset[,4], as.numeric)
+    finalset <- finalset[complete.cases(finalset[,4]),]
     finalset <- arrange(finalset,heart.failure,Name)
   }
   if(outcome =="pneumonia"){
     finalset[,5] <- lapply(finalset[,5], as.numeric)
+    finalset <- finalset[complete.cases(finalset[,5]),]
     finalset <- arrange(finalset,pneumonia,Name)
   }
-  View(finalset)
-  finalset$Name[1]
+  if(num == "worst"){num = dim(finalset)[1]}
+  if(num == "best"){num = 1}
+  finalset$Name[num]
 }
